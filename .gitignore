@@ -4,3 +4,6 @@ qtest
 *.dSYM
 .vscode
 .devcontainer
+.gdb_history
+*.swp
+peda-session-qtest.txt

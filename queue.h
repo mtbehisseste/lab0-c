@@ -24,12 +24,9 @@ typedef struct ELE {
 
 /* Queue structure */
 typedef struct {
-    list_ele_t *head; /* Linked list of elements */
+    list_ele_t *head; /* Head of linked list of elements */
+    list_ele_t *tail; /* Tail of linked list of elements */
     int size;
-    /* TODO: You will need to add more fields to this structure
-     *        to efficiently implement q_size and q_insert_tail.
-     */
-    /* TODO: Remove the above comment when you are about to implement. */
 } queue_t;
 
 /* Operations on queue */
@@ -95,5 +92,38 @@ void q_reverse(queue_t *q);
  * element, do nothing.
  */
 void q_sort(queue_t *q);
+
+/*
+ * Implementation of bubble sort
+ * Assume that all the size of queue passed in are greater than 2 elements
+ */
+void bubble_sort(queue_t *q);
+
+void swap_string(char **str1, char **str2);
+
+/*
+ * Implementation of insertion sort
+ * Return the sorted queue.
+ */
+queue_t *insertion_sort(queue_t *q);
+
+/*
+ * Implementation of merge sort.
+ * Sort the given queue
+ * Return the sorted queue or the element if there's only one.
+ */
+void merge_sort(list_ele_t *q);
+
+/*
+ * Split current queue into two halves,
+ * use *front and *back to point to each half.
+ */
+void split_queue(list_ele_t *q_head, list_ele_t *front, list_ele_t *back);
+
+/*
+ * Merge the given two queue
+ * Return the merged queue
+ */
+list_ele_t *merge(list_ele_t *a, list_ele_t *b);
 
 #endif /* LAB0_QUEUE_H */
