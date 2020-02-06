@@ -94,34 +94,20 @@ void q_reverse(queue_t *q);
 void q_sort(queue_t *q);
 
 /*
- * Implementation of bubble sort
- * Assume that all the size of queue passed in are greater than 2 elements
- */
-void bubble_sort(queue_t *q);
-
-void swap_string(char **str1, char **str2);
-
-/*
- * Implementation of insertion sort
- * Return the sorted queue.
- */
-queue_t *insertion_sort(queue_t *q);
-
-/*
  * Implementation of merge sort.
  * Sort the given queue
  * Return the sorted queue or the element if there's only one.
  */
-void merge_sort(list_ele_t *q);
+void merge_sort(list_ele_t **q_head);
 
 /*
  * Split current queue into two halves,
  * use *front and *back to point to each half.
  */
-void split_queue(list_ele_t *q_head, list_ele_t *front, list_ele_t *back);
+void split_queue(list_ele_t *q_head, list_ele_t **front, list_ele_t **back);
 
 /*
- * Merge the given two queue
+ * Merge the given two sorted queue
  * Return the merged queue
  */
 list_ele_t *merge(list_ele_t *a, list_ele_t *b);

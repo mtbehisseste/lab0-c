@@ -117,13 +117,15 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
     if (!q || !q_size(q))
         return false;
 
-    list_ele_t *newHead;
-    newHead = q->head->next; /* Points to new head element */
-    if (sp)
+    list_ele_t *newh;
+    newh = q->head->next; /* Points to new head element */
+    if (sp) {
         strncpy(sp, q->head->value, bufsize - 1);
+        sp[bufsize - 1] = '\0';
+    }
     free(q->head->value);
     free(q->head);
-    q->head = newHead;
+    q->head = newh;
 
     q->size--;
     return true;
@@ -150,7 +152,7 @@ int q_size(queue_t *q)
  */
 void q_reverse(queue_t *q)
 {
-    if (!q || !q_size(q))
+    if (!q || !q_size(q) || q_size(q) == 1)
         return;
 
     list_ele_t *pre = q->head;
@@ -179,152 +181,79 @@ void q_sort(queue_t *q)
     if (!q || !q_size(q) || q_size(q) == 1)
         return;
 
-    /* merge_sort(q->head); */
-
-    /* The sorted queue is expected to be the same size of the origin queue */
-    /* q = insertion_sort(q); */
-
-    bubble_sort(q);
+    merge_sort(&q->head);
 }
-
-/*
- * Implementation of bubble sort
- * Assume that all the size of queue passed in are greater than 2 elements
- */
-void bubble_sort(queue_t *q)
-{
-    for (list_ele_t *cur = q->head; cur; cur = cur->next) {
-        for (list_ele_t *iter = cur->next; iter; iter = iter->next) {
-            if (strcmp(iter->value, cur->value) < 0)
-                swap_string(&iter->value, &cur->value);
-        }
-    }
-}
-
-void swap_string(char **str1, char **str2)
-{
-    char *temp = *str1;
-    *str1 = *str2;
-    *str2 = temp;
-}
-
-
-/*
- * Implementation of insertion sort
- * Create an empty queue then insert each element of the origin queue into it in
- * order Return the sorted queue.
- */
-/* queue_t *insertion_sort(queue_t *q) */
-/* { */
-/*     queue_t *newq = q_new(); */
-/*     [> bool success; [> This variable is used for triggering q_insert_head
- * and q_insert_tail <] <] */
-
-/*     list_ele_t* cur = q->head; [> Current element to be inserted <] */
-/*     while (cur) { */
-/*         if (!q_size(newq)) { [> newq is empty <] */
-/*             if (!q_insert_head(newq, q->head->value))  */
-/*                 return q; */
-/*         } else if (q_size(newq) == 1) { [> Decide to insert before head
- * element or after <]  */
-/*             if (strcmp(newq->head->value, cur->value) >= 0) { */
-/*                 if (!q_insert_head(newq, cur->value))  */
-/*                     return q; */
-/*             } else { */
-/*                 if (!q_insert_tail(newq, cur->value))  */
-/*                     return q; */
-/*             } */
-/*         } else {  */
-/* This variable is use for iterating through the queue
- * and decide where cur element should be inserted.
- */
-/*             list_ele_t *tmp = newq->head;  */
-
-/*             while (tmp) { */
-/*                 if (strcmp(tmp->value, cur->value) < 0) { [> Insert cur after
- * tmp <] */
-/*                     list_ele_t *new_element; [> Create a new elemtent <] */
-/*                     new_element = malloc(sizeof(list_ele_t)); */
-/*                     if (!new_element) */
-/*                         return false; */
-
-/*                     new_element->value = malloc((strlen(cur->value)+1) *
- * sizeof(char)); */
-/*                     if (!new_element->value) { */
-/*                         free(new_element); [> Free the allocated space <] */
-/*                         return false; */
-/*                     } */
-/*                     strncpy(new_element->value, cur->value,
- * strlen(cur->value)+1); */
-
-/*                     new_element->next = tmp->next; */
-/*                     tmp->next = new_element; */
-/*                     break; */
-/*                 } */
-/*                 tmp = tmp->next; */
-/*             } */
-/*         } */
-/*         cur = cur->next; */
-/*     } */
-
-/*     cur = q->head; */
-/*     while (cur->next)  */
-/*         cur = cur->next;  */
-/*     newq->tail = cur; */
-/*     return newq; */
-/* } */
 
 /*
  * Implementation of merge sort.
  * Sort the given queue
  * Return the sorted queue or the element if there's only one.
  */
-/* void merge_sort(list_ele_t *q_head) */
-/* { */
-/*     if (!q_head || !q_head->next) [> Return if q_head is NULL or there's only
- * one element <] */
-/*         return; */
+void merge_sort(list_ele_t **q_head)
+{
+    list_ele_t *head =
+        *q_head; /* q_head is the pointer point to the address of the
+                    head element pointer, dereference to get pointer itself */
+    if (!head ||
+        !head->next) /* Return if q_head is NULL or there's only one element */
+        return;
 
-/*     [> Split the queue into two queue  <] */
-/*     list_ele_t *front; */
-/*     list_ele_t *back; */
-/*     split_queue(q_head, front, back);  */
+    /* Split the queue into two queue */
+    list_ele_t *front = NULL;
+    list_ele_t *back;
+    split_queue(head, &front, &back);
 
-/*     [> Sort each queue <] */
-/*     merge_sort(front); */
-/*     merge_sort(back); */
+    /* Sort each queue */
+    merge_sort(&front);
+    merge_sort(&back);
 
-/*     q_head = merge(front, back); */
-/*     return q_head; */
-/* } */
+    *q_head = merge(front, back);
+}
 
 /*
  * Split current queue into two halves,
  * use *front and *back to point to each half.
  */
-/* void split_queue(list_ele_t *q_head, list_ele_t *front, list_ele_t *back)  */
-/* { */
-/*     int element_num = 1; */
-/*     list_ele_t *tmp = q_head; */
-/*     while (tmp->next) { */
-/*         element_num ++; */
-/*         tmp = tmp->next; */
-/*     } */
+void split_queue(list_ele_t *q_head, list_ele_t **front, list_ele_t **back)
+{
+    list_ele_t *fast;
+    list_ele_t *slow;
+    slow = q_head;
+    fast = q_head->next;
 
-/*     tmp = q_head; */
-/*     for (int i=0; i<(element_num/2); i++) */
-/*         tmp = tmp->next;  */
+    while (fast) {
+        fast = fast->next;
+        if (fast) {
+            fast = fast->next;
+            slow = slow->next;
+        }
+    }
 
-/*     back = tmp->next; */
-/*     tmp->next = NULL; */
-/*     front = q_head; */
-/* } */
+    *front = q_head;
+    *back = slow->next;
+    slow->next = NULL;
+}
 
 /*
- * Merge the given two queue
+ * Merge the given two sorted queue
  * Return the merged queue
  */
-/* list_ele_t *merge(list_ele_t *a, list_ele_t *b) */
-/* { */
-/*     return a; */
-/* } */
+list_ele_t *merge(list_ele_t *a, list_ele_t *b)
+{
+    list_ele_t *result;
+
+    if (!a)
+        return b;
+    else if (!b)
+        return a;
+
+    if (strcmp(a->value, b->value) < 0) {
+        result = a;
+        result->next = merge(a->next, b);
+    } else {
+        result = b;
+        result->next = merge(a, b->next);
+    }
+
+    return result;
+}
