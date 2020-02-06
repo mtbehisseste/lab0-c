@@ -186,21 +186,25 @@ void q_sort(queue_t *q)
 
 /*
  * Implementation of merge sort.
- * Sort the given queue
- * Return the sorted queue or the element if there's only one.
+ * Split the queue into two halves then recursively do
+ * merge_sort() for each half
+ * Then merge the splited two queue by ascending order
+ * q_head is the reference of the head element of the queue
+ * No effect if the queue is empty or there's only one element
  */
 void merge_sort(list_ele_t **q_head)
 {
-    list_ele_t *head =
-        *q_head; /* q_head is the pointer point to the address of the
-                    head element pointer, dereference to get pointer itself */
+    /* q_head is the pointer point to the address of the
+    head element pointer, dereference to get pointer itself */
+    list_ele_t *head = *q_head;
+
     if (!head ||
         !head->next) /* Return if q_head is NULL or there's only one element */
         return;
 
     /* Split the queue into two queue */
     list_ele_t *front = NULL;
-    list_ele_t *back;
+    list_ele_t *back = NULL;
     split_queue(head, &front, &back);
 
     /* Sort each queue */
@@ -213,6 +217,7 @@ void merge_sort(list_ele_t **q_head)
 /*
  * Split current queue into two halves,
  * use *front and *back to point to each half.
+ * Pass the reference of the two pointers as parameters.
  */
 void split_queue(list_ele_t *q_head, list_ele_t **front, list_ele_t **back)
 {
@@ -221,6 +226,9 @@ void split_queue(list_ele_t *q_head, list_ele_t **front, list_ele_t **back)
     slow = q_head;
     fast = q_head->next;
 
+    /* fast iterate two time faster than slow.
+     So that when fast reach the end of queue,
+     slow is at middle of the queue. */
     while (fast) {
         fast = fast->next;
         if (fast) {
@@ -240,20 +248,58 @@ void split_queue(list_ele_t *q_head, list_ele_t **front, list_ele_t **back)
  */
 list_ele_t *merge(list_ele_t *a, list_ele_t *b)
 {
-    list_ele_t *result;
+    list_ele_t *result, *current;
 
     if (!a)
         return b;
     else if (!b)
         return a;
 
+    /* Initialize the head of result */
     if (strcmp(a->value, b->value) < 0) {
         result = a;
-        result->next = merge(a->next, b);
+        a = a->next;
     } else {
         result = b;
-        result->next = merge(a, b->next);
+        b = b->next;
+    }
+    current = result;
+
+    /* Iterative version of merge */
+    while (1) {
+        if (!a) {
+            current->next = b;
+            break;
+        }
+        if (!b) {
+            current->next = a;
+            break;
+        }
+
+        if (strcmp(a->value, b->value) < 0) {
+            current->next = a;
+            a = a->next;
+        } else {
+            current->next = b;
+            b = b->next;
+        }
+
+        current = current->next;
     }
 
     return result;
+
+    /* Recursive version of merge, this might cause TLE */
+    /*
+     * if (strcmp(a->value, b->value) < 0) {
+     *     result = a;
+     *     result->next = merge(a->next, b);
+     * } else {
+     *     result = b;
+     *     result->next = merge(a, b->next);
+     * }
+     *
+     * return result;
+    list_ele_t *result_head = result;
+     */
 }

@@ -95,14 +95,18 @@ void q_sort(queue_t *q);
 
 /*
  * Implementation of merge sort.
- * Sort the given queue
- * Return the sorted queue or the element if there's only one.
+ * Split the queue into two halves then recursively do
+ * merge_sort() for each half
+ * Then merge the splited two queue by ascending order
+ * q_head is the reference of the head element of the queue
+ * No effect if the queue is empty or there's only one element
  */
 void merge_sort(list_ele_t **q_head);
 
 /*
  * Split current queue into two halves,
  * use *front and *back to point to each half.
+ * Pass the reference of the two pointers as parameters.
  */
 void split_queue(list_ele_t *q_head, list_ele_t **front, list_ele_t **back);
 
