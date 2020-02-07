@@ -195,7 +195,7 @@ void q_sort(queue_t *q)
 void merge_sort(list_ele_t **q_head)
 {
     /* q_head is the pointer point to the address of the
-    head element pointer, dereference to get pointer itself */
+     * head element pointer, dereference to get pointer itself */
     list_ele_t *head = *q_head;
 
     if (!head ||
@@ -226,9 +226,9 @@ void split_queue(list_ele_t *q_head, list_ele_t **front, list_ele_t **back)
     slow = q_head;
     fast = q_head->next;
 
-    /* fast iterate two time faster than slow.
-     So that when fast reach the end of queue,
-     slow is at middle of the queue. */
+    /* fast iterates two times faster than slow.
+     * So that when fast reaches the end of queue,
+     * slow is at middle of the queue. */
     while (fast) {
         fast = fast->next;
         if (fast) {
@@ -289,7 +289,8 @@ list_ele_t *merge(list_ele_t *a, list_ele_t *b)
 
     return result;
 
-    /* Recursive version of merge, this might cause TLE */
+    /* Recursive version of merge, this might cause stack
+     * explosion where there are too many elements. */
     /*
      * if (strcmp(a->value, b->value) < 0) {
      *     result = a;
