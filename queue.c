@@ -24,12 +24,8 @@ queue_t *q_new()
 /* Free all storage used by queue */
 void q_free(queue_t *q)
 {
-    /* Free queue structure */
-    if (!q)
-        return;
-
-    /* Free head element until there's no element left,
-     * since q_remove_head() return false when q is NULL or empty */
+    /* Free head element until q_remove_head() return false, it happens when q
+     * is NULL or empty */
     while (q_remove_head(q, NULL, 0))
         ;
 
