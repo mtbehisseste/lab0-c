@@ -52,6 +52,7 @@ bool q_insert_head(queue_t *q, char *s)
     newh->value = malloc((strlen(s) + 1) * sizeof(char));
     if (!newh->value) {
         free(newh); /* Free the allocated space */
+        newh = NULL;
         return false;
     }
     strncpy(newh->value, s, strlen(s) + 1);
@@ -85,6 +86,7 @@ bool q_insert_tail(queue_t *q, char *s)
     newt->value = malloc((strlen(s) + 1) * sizeof(char));
     if (!newt->value) {
         free(newt); /* Free the allocated space */
+        newt = NULL;
         return false;
     }
     strncpy(newt->value, s, strlen(s) + 1);
@@ -120,7 +122,9 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
         sp[bufsize - 1] = '\0';
     }
     free(q->head->value);
+    q->head->value = NULL;
     free(q->head);
+    q->head = NULL;
     q->head = newh;
 
     q->size--;
